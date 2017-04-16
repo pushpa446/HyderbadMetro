@@ -1,11 +1,14 @@
 import java.util.List;
 
-public class FareCalculator {
+class FareCalculator {
+    private static final float LINE_ONE_COST = 2.50f;
+    private static final float LINE_TWO_COST = 2.0f;
+    private static final float LINE_THREE_COST = 3.0f;
     
-    public FareCalculator() {
+    FareCalculator() {
     }
     
-    public float getTotalFare(List<String> route) {
+    float getTotalFare(List<String> route) {
         float fare = 0f;
         int totalStations = route.size();
         fare = fare + 10.0f;
@@ -21,15 +24,14 @@ public class FareCalculator {
     }
     
     private float getExtraCost(String stationCode) {
-        float cost = 0f;
         if (stationCode.contains("A")) {
-            cost = 2.50f;
+            return LINE_ONE_COST;
         } else if (stationCode.contains("B")) {
-            cost = 2.0f;
+            return LINE_TWO_COST;
         } else if (stationCode.contains("C")) {
-            cost =3.0f;
+            return LINE_THREE_COST;
         }
-        return cost;
+        return 0.0f;
     }
     
 }

@@ -1,3 +1,5 @@
+package com.metro.admin;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -6,23 +8,17 @@ import java.util.Map;
 import java.util.Set;
 
 public class RouteMap {
-    LinkedList<Station> stations = new LinkedList<>();
-    List<List<String>> paths = new ArrayList<>();
+    private LinkedList<Station> stations = new LinkedList<>();
+    private List<List<String>> paths = new ArrayList<>();
     
-    public RouteMap() {
+    RouteMap() {
     }
     
-    public void addStation(Station station){
+    void addStation(Station station){
         stations.add(station);
     }
     
-    public void display(){
-        this.stations.stream().forEach(station -> {
-            System.out.println(station.getStationCode()+"\t"+station.getStationName());
-        });
-    }
-    
-    public Station getStationByCode(String stationCode){
+    Station getStationByCode(String stationCode){
         for (Station station :
                stations ) {
             if(station.getStationCode().equals(stationCode)){
@@ -30,6 +26,11 @@ public class RouteMap {
             }
         }
         return null;
+    }
+    
+    public String getStationNameByCode(String stationCode){
+        Station station = getStationByCode(stationCode);
+        return station != null ? station.getStationName() : null;
     }
     
     public List<String> getPath(String source, String destination) {
