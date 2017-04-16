@@ -1,72 +1,68 @@
-import com.sun.corba.se.impl.orbutil.graph.Graph;
-import com.sun.corba.se.impl.orbutil.graph.GraphImpl;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import sun.security.provider.certpath.Vertex;
+import java.util.Map;
+import java.util.Set;
 
 public class RouteMap {
-    LinkedList<Station> line1 = new LinkedList<>();
-    LinkedList<Station> line2 = new LinkedList<>();
-    LinkedList<Station> line3 = new LinkedList<>();
-    LinkedList<Station> crossStations = new LinkedList<>();
-    Graph some = new GraphImpl();
+    LinkedList<Station> stations = new LinkedList<>();
+    List<List<String>> paths = new ArrayList<>();
     
-    public void addStation(Station station) {
-        if (station != null) {
-            LinkedList<Station> line = getLineByName(station.getLine());
-            if (line != null) {
-                addToLine(line, station);
-            }
-        }
+    public RouteMap() {
     }
     
-    public Station getStationByLine(String lineName) {
-        LinkedList<Station> line = getLineByName(lineName);
-        Station station = (line != null && line.size() != 0) ? line.getFirst() : null;
-        while (station != null) {
-            if (station.getLine().equals(lineName)) {
+    public void addStation(Station station){
+        stations.add(station);
+    }
+    
+    public void display(){
+        this.stations.stream().forEach(station -> {
+            System.out.println(station.getStationCode()+"\t"+station.getStationName());
+        });
+    }
+    
+    public Station getStationByCode(String stationCode){
+        for (Station station :
+               stations ) {
+            if(station.getStationCode().equals(stationCode)){
                 return station;
             }
-            station = station.getNextStation();
         }
         return null;
     }
     
-    private LinkedList<Station> getLineByName(String lineName) {
-        if (lineName.startsWith("A")) {
-            return line1;
-        } else if (lineName.startsWith("B")) {
-            return line2;
-        } else if (lineName.startsWith("C")) {
-            return line3;
-        } else if (lineName.startsWith("X")) {
-            return crossStations;
+    public List<String> getPath(String source, String destination) {
+      getAllPaths(getStationByCode(source), getStationByCode(destination),new HashMap<>(),new ArrayList<>());
+        List<String> shortestPath = paths.get(0);
+        for (List<String> path:
+             paths) {
+            if(path.size() < shortestPath.size()){
+                shortestPath = path;
+            }
         }
-        return null;
+        paths.clear();
+        return shortestPath;
     }
     
-    private void addToLine(LinkedList<Station> line, Station station) {
-        Station existingStation = getStationByLine(station.getLine());
-        if(line.size() == 0){
-            line.addFirst(station);
+    private void getAllPaths(Station source, Station destination, Map<String, Boolean> visitedStations, List<String> path) {
+        visitedStations.put(source.getStationCode(), true);
+        path.add(source.getStationCode());
+        if(source.equals(destination)){
+            List<String> route = new ArrayList<>();
+            route.addAll(path);
+            paths.add(route);
         }
         else {
-            Station lastStation = line.getLast();
-            if (lastStation != null) {
-                lastStation.setNextStation(station);
-                station.setPreviousStation(lastStation);
+            Set<Station> neighbourStations = source.getNeighbourStations();
+            for (Station station :
+                    neighbourStations) {
+                if (visitedStations.get(station.getStationCode()) == null) {
+                    getAllPaths(station,destination,visitedStations,path);
+                }
             }
-            line.addLast(station);
         }
+        path.remove(path.size()-1);
+        visitedStations.remove(source.getStationCode());
     }
-    
-    public void display(String lineName){
-        for (Station station :
-                getLineByName(lineName)) {
-            System.out.println(station.getLine() + "\t" + station.getStationName());
-        }
-    }
-    
 }

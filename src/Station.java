@@ -1,20 +1,22 @@
+import java.util.HashSet;
+import java.util.Set;
+
 public class Station {
-    private String line;
+    private String stationCode;
     private String stationName;
-    private Station previousStation;
-    private Station nextStation;
+    private Set<Station> neighbourStations = new HashSet<>();
     
-    public Station(String line, String stationName) {
-        this.line = line;
+    public Station(String stationCode, String stationName) {
+        this.stationCode = stationCode;
         this.stationName = stationName;
     }
     
-    public String getLine() {
-        return line;
+    public String getStationCode() {
+        return stationCode;
     }
     
-    public void setLine(String line) {
-        this.line = line;
+    public void setStationCode(String stationCode) {
+        this.stationCode = stationCode;
     }
     
     public String getStationName() {
@@ -25,19 +27,26 @@ public class Station {
         this.stationName = stationName;
     }
     
-    public Station getPreviousStation() {
-        return previousStation;
+    public Set<Station> getNeighbourStations() {
+        return neighbourStations;
     }
     
-    public void setPreviousStation(Station previousStation) {
-        this.previousStation = previousStation;
+    public void setNeighbourStations(Set<Station> neighbourStations) {
+        this.neighbourStations = neighbourStations;
     }
     
-    public Station getNextStation() {
-        return nextStation;
+    public void addNeighbourStation(Station station) {
+        this.neighbourStations.add(station);
     }
     
-    public void setNextStation(Station nextStation) {
-        this.nextStation = nextStation;
+    @Override
+    public boolean equals(Object otherStation) {
+        if (this == otherStation) return true;
+        if (!(otherStation instanceof Station)) return false;
+        
+        Station station = (Station) otherStation;
+    
+        return getStationCode().equals(station.getStationCode());
+    
     }
 }
